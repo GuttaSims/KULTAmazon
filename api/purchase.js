@@ -5,7 +5,7 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZnB0bmJuYWZueWp2cGpscWNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NTAyNTAsImV4cCI6MjA4ODMyNjI1MH0.US9eA7wEKFv3U6v4_nhlhl-pr62tKfYctZd46Gj9sIg'
 )
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" })
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
     console.log("Purchase request:", product_id)
 
-    // Get product from database
+    // Get product info
     const { data: product, error } = await supabase
       .from("products")
       .select("*")
@@ -25,26 +25,33 @@ export default async function handler(req, res) {
       .single()
 
     if (error || !product) {
+      console.log("Product not found:", error)
       return res.status(404).json({ error: "Product not found" })
     }
 
     // Log purchase
-    await supabase
+    const { error: purchaseError } = await supabase
       .from("purchases")
       .insert([
         {
           product_id: product.product_id,
           buyer_uuid: buyer_uuid,
+          creator_uuid: product.creator_uuid,
           price: product.price
         }
       ])
 
-    console.log("Purchase logged")
+    if (purchaseError) {
+      console.log("Purchase log error:", purchaseError)
+    }
 
-    // Send delivery item name back to SL
+    console.log("Purchase successful")
+
+    // Send delivery info back to SL
     return res.status(200).json({
       success: true,
-      delivery_item: product.delivery_item
+      delivery_item: product.delivery_item,
+      box_size: product.box_size
     })
 
   } catch (err) {
