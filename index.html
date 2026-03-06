@@ -3,38 +3,7 @@
 
 <head>
 <title>KULT Dashboard</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-body{
-font-family:Arial;
-background:#111;
-color:white;
-padding:40px;
-}
-
-.card{
-background:#1b1b1b;
-padding:20px;
-margin:10px 0;
-border-radius:10px;
-}
-
-input{
-padding:10px;
-margin-right:10px;
-}
-
-button{
-padding:10px;
-background:#ff00cc;
-border:none;
-color:white;
-cursor:pointer;
-}
-</style>
-
 </head>
 
 <body>
@@ -49,26 +18,12 @@ cursor:pointer;
 <div id="products"></div>
 
 <script>
-
 const { createClient } = supabase
 
 const supabaseClient = createClient(
 "https://ppfptnbnafnyjvpjlqch.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZnB0bmJuYWZueWp2cGpscWNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NTAyNTAsImV4cCI6MjA4ODMyNjI1MH0.US9eA7wEKFv3U6v4_nhlhl-pr62tKfYctZd46Gj9sIg"
 )
-
-async function addProduct(){
-
-let name = document.getElementById("name").value
-let price = document.getElementById("price").value
-
-await supabaseClient
-.from("products")
-.insert([{product_name:name,price:price}])
-
-loadProducts()
-
-}
 
 async function loadProducts(){
 
@@ -79,13 +34,7 @@ let { data } = await supabaseClient
 let html=""
 
 data.forEach(p=>{
-
-html+=`
-<div class="card">
-${p.product_name} - ${p.price}L
-</div>
-`
-
+html += `<div>${p.product_name} - ${p.price}L</div>`
 })
 
 document.getElementById("products").innerHTML = html
@@ -93,7 +42,6 @@ document.getElementById("products").innerHTML = html
 }
 
 loadProducts()
-
 </script>
 
 </body>
