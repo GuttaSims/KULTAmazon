@@ -19,17 +19,22 @@
 <input id="slname" placeholder="Second Life Name">
 <input id="uuid" placeholder="Second Life UUID">
 
-<button onclick="register()">Register</button>
+<br><br>
+
+<button id="registerBtn">Register</button>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
 
 const supabase = window.supabase.createClient(
-"https://ppfptnbnafnjyvpjlqch.supabase.co",
-"YOUR_PUBLIC_KEY"
+"https://ppfptnbnafnyjvpjlqch.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZnB0bmJuYWZueWp2cGpscWNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NTAyNTAsImV4cCI6MjA4ODMyNjI1MH0.US9eA7wEKFv3U6v4_nhlhl-pr62tKfYctZd46Gj9sIg"
 )
+
+document.getElementById("registerBtn").addEventListener("click", register)
 
 async function register(){
 
@@ -39,9 +44,16 @@ const password=document.getElementById("password").value
 const slname=document.getElementById("slname").value
 const uuid=document.getElementById("uuid").value
 
-const {error}=await supabase.auth.signUp({
-email:email,
-password:password
+if(!email || !password){
+
+alert("Email and password required")
+return
+
+}
+
+const { data, error } = await supabase.auth.signUp({
+email: email,
+password: password
 })
 
 if(error){
@@ -51,12 +63,13 @@ return
 
 }
 
+// save SL info to users table
 await supabase.from("users").insert([{
 
-username:username,
-email:email,
-sl_uuid:uuid,
-sl_name:slname
+username: username,
+email: email,
+sl_uuid: uuid,
+sl_name: slname
 
 }])
 
