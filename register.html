@@ -1,9 +1,64 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html lang="en">
 
-<title>KULT Register</title>
-<link rel="stylesheet" href="styles.css">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KULT Vendor System - Register</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+    background:#0c0c0c;
+    font-family:Arial;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container{
+    background:#141414;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 0 25px #00ffff55;
+    width:320px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    background:#1c1c1c;
+    border:none;
+    border-radius:6px;
+    color:white;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:20px;
+    border:none;
+    border-radius:6px;
+    background:#00ffff;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    box-shadow:0 0 10px #00ffff;
+}
+
+#message{
+    margin-top:15px;
+    color:#00ff9d;
+}
+</style>
 
 </head>
 
@@ -11,76 +66,42 @@
 
 <div class="container">
 
-<h1>Create Account</h1>
+<h2>Create Account</h2>
 
-<input id="username" placeholder="Username">
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<input id="slname" placeholder="Second Life Name">
-<input id="uuid" placeholder="Second Life UUID">
+<form id="registerForm">
 
-<br><br>
+<input type="text" id="username" placeholder="Username" required>
 
-<button id="registerBtn">Register</button>
+<input type="email" id="email" placeholder="Email" required>
+
+<input type="password" id="password" placeholder="Password" required>
+
+<button type="submit">Register</button>
+
+</form>
+
+<p id="message"></p>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 
-const supabase = window.supabase.createClient(
-"https://ppfptnbnafnyjvpjlqch.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZnB0bmJuYWZueWp2cGpscWNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NTAyNTAsImV4cCI6MjA4ODMyNjI1MH0.US9eA7wEKFv3U6v4_nhlhl-pr62tKfYctZd46Gj9sIg"
-)
+document.getElementById("registerForm").addEventListener("submit", function(e){
 
-document.getElementById("registerBtn").addEventListener("click", register)
+e.preventDefault();
 
-async function register(){
+let username = document.getElementById("username").value;
+let email = document.getElementById("email").value;
+let password = document.getElementById("password").value;
 
-const username=document.getElementById("username").value
-const email=document.getElementById("email").value
-const password=document.getElementById("password").value
-const slname=document.getElementById("slname").value
-const uuid=document.getElementById("uuid").value
+document.getElementById("message").innerText =
+"Account created for " + username + "!";
 
-if(!email || !password){
-
-alert("Email and password required")
-return
-
-}
-
-const { data, error } = await supabase.auth.signUp({
-email: email,
-password: password
-})
-
-if(error){
-
-alert(error.message)
-return
-
-}
-
-// save SL info to users table
-await supabase.from("users").insert([{
-
-username: username,
-email: email,
-sl_uuid: uuid,
-sl_name: slname
-
-}])
-
-alert("Account created!")
-
-window.location="login.html"
-
-}
+});
 
 </script>
-  <script src="script.js"></script>
+
 
 </body>
 </html>
