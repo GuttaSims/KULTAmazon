@@ -1,64 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<meta charset="UTF-8">
 <title>KULT Vendor System - Register</title>
 
 <link rel="stylesheet" href="style.css">
-
-<style>
-body{
-    background:#0c0c0c;
-    font-family:Arial;
-    color:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
-
-.container{
-    background:#141414;
-    padding:40px;
-    border-radius:12px;
-    box-shadow:0 0 25px #00ffff55;
-    width:320px;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    background:#1c1c1c;
-    border:none;
-    border-radius:6px;
-    color:white;
-}
-
-button{
-    width:100%;
-    padding:12px;
-    margin-top:20px;
-    border:none;
-    border-radius:6px;
-    background:#00ffff;
-    color:black;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-button:hover{
-    box-shadow:0 0 10px #00ffff;
-}
-
-#message{
-    margin-top:15px;
-    color:#00ff9d;
-}
-</style>
 
 </head>
 
@@ -70,7 +18,9 @@ button:hover{
 
 <form id="registerForm">
 
-<input type="text" id="username" placeholder="Username" required>
+<input type="text" id="sl_name" placeholder="Second Life Name" required>
+
+<input type="text" id="uuid" placeholder="Second Life UUID" required>
 
 <input type="email" id="email" placeholder="Email" required>
 
@@ -84,24 +34,8 @@ button:hover{
 
 </div>
 
-
-<script>
-
-document.getElementById("registerForm").addEventListener("submit", function(e){
-
-e.preventDefault();
-
-let username = document.getElementById("username").value;
-let email = document.getElementById("email").value;
-let password = document.getElementById("password").value;
-
-document.getElementById("message").innerText =
-"Account created for " + username + "!";
-
-});
-
-</script>
-
+<script src="script.js"></script>
 
 </body>
+
 </html>
