@@ -1,54 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>KULT Vendor Dashboard</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<style>
-body{
-font-family:Arial;
-background:#111;
-color:white;
-padding:40px;
-}
-
-.card{
-background:#1b1b1b;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
-}
-
-button{
-background:#ff00cc;
-border:none;
-padding:10px;
-color:white;
-cursor:pointer;
-}
-</style>
-
-</head>
-
-<body>
-
-<h1>KULT Product Dashboard</h1>
-
-<div class="card">
-
-<input id="name" placeholder="Product Name">
-<input id="price" placeholder="Price">
-
-<button onclick="addProduct()">Add Product</button>
-
-</div>
-
-<div id="products"></div>
 
 <script>
 
-const supabase = supabase.createClient(
+const supabaseClient = supabase.createClient(
 "https://ppfptnbnafnyjvpjlqch.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZnB0bmJuYWZueWp2cGpscWNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NTAyNTAsImV4cCI6MjA4ODMyNjI1MH0.US9eA7wEKFv3U6v4_nhlhl-pr62tKfYctZd46Gj9sIg"
 )
@@ -58,9 +12,20 @@ async function addProduct(){
 let name = document.getElementById("name").value
 let price = document.getElementById("price").value
 
-await supabase
+const { data, error } = await supabaseClient
 .from("products")
-.insert([{product_name:name,price:price}])
+.insert([
+{
+product_name: name,
+price: price
+}
+])
+
+if(error){
+console.log(error)
+alert("Error adding product")
+return
+}
 
 loadProducts()
 
@@ -68,9 +33,14 @@ loadProducts()
 
 async function loadProducts(){
 
-let {data} = await supabase
+const { data, error } = await supabaseClient
 .from("products")
 .select("*")
+
+if(error){
+console.log(error)
+return
+}
 
 let html=""
 
@@ -91,6 +61,3 @@ document.getElementById("products").innerHTML = html
 loadProducts()
 
 </script>
-
-</body>
-</html>
