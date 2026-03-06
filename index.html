@@ -2,8 +2,39 @@
 <html>
 
 <head>
+<meta charset="UTF-8">
 <title>KULT Dashboard</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+font-family:Arial;
+background:#111;
+color:white;
+padding:40px;
+}
+
+.card{
+background:#1b1b1b;
+padding:15px;
+margin-top:10px;
+border-radius:8px;
+}
+
+input{
+padding:8px;
+margin-right:10px;
+}
+
+button{
+padding:8px 12px;
+background:#ff00cc;
+border:none;
+color:white;
+cursor:pointer;
+}
+</style>
 </head>
 
 <body>
@@ -15,33 +46,61 @@
 
 <button onclick="addProduct()">Add Product</button>
 
+<h2>Products</h2>
+
 <div id="products"></div>
 
 <script>
-const { createClient } = supabase
+
+const { createClient } = supabase;
 
 const supabaseClient = createClient(
 "https://ppfptnbnafnyjvpjlqch.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZnB0bmJuYWZueWp2cGpscWNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NTAyNTAsImV4cCI6MjA4ODMyNjI1MH0.US9eA7wEKFv3U6v4_nhlhl-pr62tKfYctZd46Gj9sIg"
-)
+);
 
-async function loadProducts(){
+window.addProduct = async function(){
 
-let { data } = await supabaseClient
+let name = document.getElementById("name").value;
+let price = document.getElementById("price").value;
+
+const { error } = await supabaseClient
 .from("products")
-.select("*")
+.insert([
+{
+product_name:name,
+price:parseInt(price)
+}
+]);
 
-let html=""
+if(error){
+console.log(error);
+alert(error.message);
+return;
+}
 
-data.forEach(p=>{
-html += `<div>${p.product_name} - ${p.price}L</div>`
-})
-
-document.getElementById("products").innerHTML = html
+loadProducts();
 
 }
 
-loadProducts()
+async function loadProducts(){
+
+const { data } = await supabaseClient
+.from("products")
+.select("*");
+
+let html="";
+
+data.forEach(p=>{
+html += `<div class="card">${p.product_name} - ${p.price}L</div>`;
+});
+
+document.getElementById("products").innerHTML = html;
+
+}
+
+loadProducts();
+
 </script>
 
 </body>
