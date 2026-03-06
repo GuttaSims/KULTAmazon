@@ -1,32 +1,38 @@
 import { createClient } from '@supabase/supabase-js'
 
+export default async function handler(req, res) {
+
+if (req.method !== 'POST') {
+return res.status(405).json({ error: 'Method not allowed' })
+}
+
 const supabase = createClient(
 process.env.SUPABASE_URL,
 process.env.SUPABASE_SERVICE_KEY
 )
 
-export default async function handler(req,res){
+const { username, email, password, sl_uuid, sl_name } = req.body
 
-if(req.method !== "POST"){
-return res.status(405).json({message:"Method not allowed"})
-}
-
-const {username,email,password,sl_name,sl_uuid} = req.body
-
-const {error} = await supabase
+const { data, error } = await supabase
 .from("users")
-.insert([{
+.insert([
+{
 username,
 email,
 password,
-sl_name,
-sl_uuid
-}])
+sl_uuid,
+sl_name
+}
+])
 
-if(error){
-return res.status(500).json({message:error.message})
+if (error) {
+console.log(error)
+return res.status(500).json({ error: error.message })
 }
 
-res.json({message:"Account created successfully!"})
+return res.status(200).json({
+message: "Account created",
+data
+})
 
 }
