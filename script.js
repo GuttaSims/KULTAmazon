@@ -1,8 +1,8 @@
 const form = document.getElementById("registerForm")
 
-if (form) {
+if(form){
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", async (e)=>{
 
 e.preventDefault()
 
@@ -12,12 +12,12 @@ const password = document.getElementById("password").value
 const sl_name = document.getElementById("sl_name").value
 const sl_uuid = document.getElementById("sl_uuid").value
 
-const res = await fetch("/api/register", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
+const res = await fetch("/api/register",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
 },
-body: JSON.stringify({
+body:JSON.stringify({
 username,
 email,
 password,
@@ -28,13 +28,13 @@ sl_uuid
 
 const data = await res.json()
 
-if (data.success) {
+if(data.success){
 
 alert("Account created!")
 
-window.location.href = "/index.html"
+window.location.href="/login.html"
 
-} else {
+}else{
 
 alert(data.error)
 
