@@ -2,39 +2,43 @@ document.getElementById("loginBtn").addEventListener("click", login);
 
 async function login(){
 
-const username=document.getElementById("username").value;
-const password=document.getElementById("password").value;
+const username = document.getElementById("username").value;
+const password = document.getElementById("password").value;
+
+const error = document.getElementById("error");
+error.innerText = "";
 
 try{
 
-const res=await fetch("/api/login",{
-
+const res = await fetch("/api/login",{
 method:"POST",
-
 headers:{
 "Content-Type":"application/json"
 },
-
-body:JSON.stringify({username,password})
-
+body:JSON.stringify({
+username,
+password
+})
 });
 
-const data=await res.json();
+const data = await res.json();
 
 if(data.success){
 
-window.location="/dashboard.html";
+localStorage.setItem("kultUser", username);
+
+window.location.href = "index.html";
 
 }else{
 
-document.getElementById("error").innerText=data.error||"Login failed";
+error.innerText = data.error || "Login failed";
 
 }
 
 }catch(err){
 
+error.innerText = "Server error";
 console.error(err);
-document.getElementById("error").innerText="Server error";
 
 }
 
