@@ -14,7 +14,7 @@ const card = document.createElement("div")
 
 card.className="product-card"
 
-card.innerHTML=`
+card.innerHTML = `
 
 <img src="${product.image || ''}">
 
@@ -23,6 +23,8 @@ card.innerHTML=`
 <p>$${product.price}</p>
 
 <p>Stock: ${product.stock}</p>
+
+<p>Box Size: ${product.box_size}</p>
 
 <button onclick="editProduct(${product.id})">
 Edit
