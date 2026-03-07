@@ -1,32 +1,39 @@
-import { createClient } from '@supabase/supabase-js'
+const form = document.getElementById("loginForm")
 
-const supabase = createClient(
-process.env.SUPABASE_URL,
-process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+if(form){
 
-export default async function handler(req,res){
+form.addEventListener("submit", async (e)=>{
 
-if(req.method !== "POST"){
-return res.status(405).json({error:"Method not allowed"})
+e.preventDefault()
+
+const username = document.getElementById("username").value
+const password = document.getElementById("password").value
+
+const res = await fetch("/api/login",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+username,
+password
+})
+})
+
+const data = await res.json()
+
+if(data.success){
+
+localStorage.setItem("user",JSON.stringify(data.user))
+
+window.location.href="/index.html"
+
+}else{
+
+alert("Invalid login")
+
 }
 
-const {username,password} = req.body
-
-const {data,error} = await supabase
-.from("users")
-.select("*")
-.eq("username",username)
-.eq("password",password)
-.single()
-
-if(error || !data){
-return res.status(401).json({error:"Invalid login"})
-}
-
-return res.status(200).json({
-success:true,
-user:data
 })
 
 }
