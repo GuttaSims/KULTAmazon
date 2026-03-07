@@ -11,25 +11,22 @@ process.env.SUPABASE_SERVICE_ROLE
 
 const { data, error } = await supabase
 .from("vendors")
-.select("*")
-.order("last_seen", { ascending: false })
+.select("username, region, position, status")
 
-if (error) {
-console.error("SUPABASE ERROR:", error)
+if(error){
 return res.status(500).json({ error: error.message })
 }
 
-return res.status(200).json({
+return res.json({
 vendors: data || []
 })
 
-} catch (err) {
+} catch(err){
 
-console.error("SERVER CRASH:", err)
+console.error("GET VENDORS ERROR:", err)
 
 return res.status(500).json({
-error: "Server crashed",
-details: err.message
+vendors: []
 })
 
 }
