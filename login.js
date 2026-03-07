@@ -1,46 +1,52 @@
-if(localStorage.getItem("kultUser")){
-window.location.href = "index.html"
+const { createClient } = require("@supabase/supabase-js")
+
+const supabase = createClient(
+process.env.SUPABASE_URL,
+process.env.SUPABASE_SERVICE_ROLE_KEY
+)
+
+module.exports = async (req, res) => {
+
+res.setHeader("Content-Type", "application/json")
+
+if (req.method !== "POST") {
+return res.status(405).json({ error: "Method not allowed" })
 }
 
-async function login(){
+try {
 
-const username = document.getElementById("username").value
-const password = document.getElementById("password").value
-const error = document.getElementById("error")
+const { username, password } = req.body || {}
 
-error.innerText = ""
-
-try{
-
-const res = await fetch("/api/login",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-username:username,
-password:password
-})
-})
-
-const data = await res.json()
-
-if(data.success){
-
-localStorage.setItem("kultUser", username)
-
-window.location.href = "index.html"
-
-}else{
-
-error.innerText = data.error || "Login failed"
-
+if (!username || !password) {
+return res.json({ error: "Missing username or password" })
 }
 
-}catch(err){
+const { data, error } = await supabase
+.from("vendors")
+.select("*")
+.eq("username", username)
+.single()
 
-console.error(err)
-error.innerText = "Server error"
+if (error || !data) {
+return res.json({ error: "User not found" })
+}
+
+if (data.password !== password) {
+return res.json({ error: "Incorrect password" })
+}
+
+return res.json({
+success: true,
+user: data.username
+})
+
+} catch (err) {
+
+console.error("LOGIN ERROR:", err)
+
+return res.status(500).json({
+error: "Server error"
+})
 
 }
 
