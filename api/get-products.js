@@ -2,32 +2,36 @@ import supabase from "./supabase.js";
 
 export default async function handler(req, res) {
 
-  const { owner } = req.query;
-
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("owner", owner);
-
-  if (error) {
-    return res.status(500).json(error);
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  res.status(200).json(data);
-}
+  try {
 
-res.status(200).json({
-products:data
-})
+    const { owner } = req.query;
 
-}catch(err){
+    if (!owner) {
+      return res.status(400).json({ error: "Owner is required" });
+    }
 
-console.error(err)
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("owner", owner)
+      .order("created_at", { ascending: false });
 
-res.status(500).json({
-products:[]
-})
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
 
-}
+    return res.status(200).json(data);
 
+  } catch (err) {
+
+    return res.status(500).json({
+      error: "Server error",
+      details: err.message
+    });
+
+  }
 }
