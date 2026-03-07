@@ -115,10 +115,10 @@ loadProducts()
 // Logout
 // -----------------------------
 
-async function logout(){
+async function logout() {
 
-await supabase.auth.signOut()
+localStorage.removeItem("user")
 
-window.location = "login.html"
+window.location.href = "/login.html"
 
 }
