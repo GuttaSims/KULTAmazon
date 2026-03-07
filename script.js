@@ -1,57 +1,11 @@
-async function loadProducts() {
+document.addEventListener("DOMContentLoaded", () => {
 
-const vendor = localStorage.getItem("kultUser")
-
-if (!vendor) return
-
-try {
-
-const res = await fetch(`/api/get-products?vendor=${vendor}`)
-const data = await res.json()
-
-const grid = document.getElementById("productsGrid")
-
-if (!grid) return
-
-grid.innerHTML = ""
-
-if (!data.products) return
-
-data.products.forEach(product => {
-
-const card = document.createElement("div")
-card.className = "product-card"
-
-card.innerHTML = `
-<img src="${product.image || '/placeholder.png'}">
-
-<div class="product-name">${product.name}</div>
-
-<div class="product-price">$${product.price}</div>
-
-<div class="product-stock">
-Stock: ${product.stock}
-</div>
-
-<div class="product-buttons">
-<button onclick="editProduct(${product.id})">Edit</button>
-<button onclick="deleteProduct(${product.id})">Delete</button>
-</div>
-`
-
-grid.appendChild(card)
+loadVendors()
+loadProducts()
 
 })
 
-} catch (err) {
-
-console.error("Products error:", err)
-
-}
-
-}
-
-async function loadVendors(){
+async function loadVendors() {
 
 try {
 
@@ -60,7 +14,7 @@ const data = await res.json()
 
 const table = document.getElementById("vendorsTable")
 
-if(!table) return
+if (!table || !data.vendors) return
 
 data.vendors.forEach(vendor => {
 
@@ -77,31 +31,65 @@ table.appendChild(row)
 
 })
 
-} catch(err){
+} catch (err) {
 
-console.error("Vendor load error:", err)
-
-}
+console.error("Vendor error:", err)
 
 }
 
-function editProduct(id){
-window.location.href = `/edit-product.html?id=${id}`
 }
 
-function deleteProduct(id){
+async function loadProducts() {
 
-fetch(`/api/delete-product?id=${id}`,{
-method:"DELETE"
+const vendor = localStorage.getItem("kultUser")
+
+if (!vendor) return
+
+try {
+
+const res = await fetch(`/api/get-products?vendor=${vendor}`)
+const data = await res.json()
+
+const grid = document.getElementById("productsGrid")
+
+if (!grid || !data.products) return
+
+grid.innerHTML = ""
+
+data.products.forEach(product => {
+
+const card = document.createElement("div")
+
+card.className = "product-card"
+
+card.innerHTML = `
+<div class="product-name">${product.name}</div>
+<div>$${product.price}</div>
+<div>Stock: ${product.stock}</div>
+<button onclick="editProduct(${product.id})">Edit</button>
+`
+
+grid.appendChild(card)
+
 })
-.then(()=>loadProducts())
+
+} catch (err) {
+
+console.error("Product error:", err)
 
 }
 
-function logout(){
+}
+
+function editProduct(id) {
+
+window.location.href = `/edit-product.html?id=${id}`
+
+}
+
+function logout() {
+
 localStorage.removeItem("kultUser")
-window.location.href="/login.html"
-}
+window.location.href = "/login.html"
 
-loadProducts()
-loadVendors()
+}
