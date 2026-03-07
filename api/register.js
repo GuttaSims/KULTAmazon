@@ -5,20 +5,16 @@ process.env.SUPABASE_URL,
 process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
-export default async function handler(req, res) {
+export default async function handler(req, res){
 
-if (req.method !== 'POST') {
-return res.status(405).json({ error: 'Method not allowed' })
+if(req.method !== "POST"){
+return res.status(405).json({error:"Method not allowed"})
 }
 
-const { username, email, password, sl_name, sl_uuid } = req.body
+const {username,email,password,sl_name,sl_uuid} = req.body
 
-if (!username || !email || !password || !sl_name || !sl_uuid) {
-return res.status(400).json({ error: "Missing fields" })
-}
-
-const { data, error } = await supabase
-.from('users')
+const {data,error} = await supabase
+.from("users")
 .insert([
 {
 username,
@@ -29,10 +25,13 @@ sl_uuid
 }
 ])
 
-if (error) {
-return res.status(500).json({ error: error.message })
+if(error){
+return res.status(500).json({error:error.message})
 }
 
-return res.status(200).json({ success: true })
+return res.status(200).json({
+success:true,
+user:data
+})
 
 }
