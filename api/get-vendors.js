@@ -1,40 +1,37 @@
-async function fetchVendors() {
+import { createClient } from "@supabase/supabase-js"
 
-  const response = await fetch("/api/get-vendors")
-  const vendors = await response.json()
+export default async function handler(req, res) {
 
-  const container = document.getElementById("vendorsContainer")
-  container.innerHTML = ""
+try {
 
-  const now = Date.now()
+const supabase = createClient(
+process.env.SUPABASE_URL,
+process.env.SUPABASE_SERVICE_ROLE
+)
 
-  vendors.forEach(vendor => {
+const { data, error } = await supabase
+.from("vendors")
+.select("*")
+.order("last_seen", { ascending: false })
 
-    const lastSeen = new Date(vendor.last_seen).getTime()
-
-    const online = now - lastSeen < 120000
-
-    const card = document.createElement("div")
-    card.className = "product-card"
-
-    card.innerHTML = `
-      <h3>${vendor.vendor_name}</h3>
-      <p>${vendor.region}</p>
-      <p>${vendor.position}</p>
-
-      <p style="color:${online ? "#00ff88" : "#ff4444"}">
-        ${online ? "ONLINE" : "OFFLINE"}
-      </p>
-
-      <button onclick="manageVendor('${vendor.vendor_uuid}')">
-        Manage
-      </button>
-    `
-
-    container.appendChild(card)
-
-  })
+if (error) {
+console.error("SUPABASE ERROR:", error)
+return res.status(500).json({ error: error.message })
 }
 
-fetchVendors()
-setInterval(fetchVendors, 10000)
+return res.status(200).json({
+vendors: data || []
+})
+
+} catch (err) {
+
+console.error("SERVER CRASH:", err)
+
+return res.status(500).json({
+error: "Server crashed",
+details: err.message
+})
+
+}
+
+}
