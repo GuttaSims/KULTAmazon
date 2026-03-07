@@ -1,12 +1,6 @@
 const API="/api/get-products"
 
 const grid=document.getElementById("productGrid")
-const logout=document.getElementById("logoutBtn")
-
-logout.onclick=()=>{
-localStorage.removeItem("user")
-window.location="login.html"
-}
 
 async function loadProducts(){
 
@@ -14,11 +8,10 @@ const res=await fetch(API)
 
 const products=await res.json()
 
-grid.innerHTML=""
-
 products.forEach(p=>{
 
 const card=document.createElement("div")
+
 card.className="product-card"
 
 card.innerHTML=`
@@ -29,7 +22,7 @@ card.innerHTML=`
 
 <p>${p.price}L</p>
 
-<button class="editBtn" onclick="editProduct('${p.product_id}')">
+<button onclick="editProduct('${p.product_id}')">
 Edit
 </button>
 
