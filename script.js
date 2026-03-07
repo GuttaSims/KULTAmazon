@@ -1,68 +1,25 @@
-async function loadVendors(){
-
-try {
-
-const res = await fetch("/api/get-vendors")
-const data = await res.json()
-
-const table = document.getElementById("vendorsTable")
-
-data.vendors.forEach(vendor => {
-
-const row = document.createElement("tr")
-
-row.innerHTML = `
-<td>${vendor.username}</td>
-<td>${vendor.region || "-"}</td>
-<td>${vendor.position || "-"}</td>
-<td>${vendor.status || "offline"}</td>
-`
-
-table.appendChild(row)
-
-})
-
-} catch(err){
-
-console.error("Vendor load error:", err)
-
-}
-
 async function loadProducts() {
 
 const vendor = localStorage.getItem("kultUser")
 
-if (!vendor) {
-console.log("No vendor logged in")
-return
-}
+if (!vendor) return
 
 try {
 
 const res = await fetch(`/api/get-products?vendor=${vendor}`)
-
-if (!res.ok) {
-console.error("Server returned error:", res.status)
-return
-}
-
 const data = await res.json()
-
-console.log("Products from server:", data)
 
 const grid = document.getElementById("productsGrid")
 
+if (!grid) return
+
 grid.innerHTML = ""
 
-if (!data.products || data.products.length === 0) {
-grid.innerHTML = "<p>No products found</p>"
-return
-}
+if (!data.products) return
 
 data.products.forEach(product => {
 
 const card = document.createElement("div")
-
 card.className = "product-card"
 
 card.innerHTML = `
@@ -88,18 +45,63 @@ grid.appendChild(card)
 
 } catch (err) {
 
-console.error("Failed to load products:", err)
+console.error("Products error:", err)
 
 }
 
 }
+
+async function loadVendors(){
+
+try {
+
+const res = await fetch("/api/get-vendors")
+const data = await res.json()
+
+const table = document.getElementById("vendorsTable")
+
+if(!table) return
+
+data.vendors.forEach(vendor => {
+
+const row = document.createElement("tr")
+
+row.innerHTML = `
+<td>${vendor.username}</td>
+<td>${vendor.region || "-"}</td>
+<td>${vendor.position || "-"}</td>
+<td>${vendor.status || "offline"}</td>
+`
+
+table.appendChild(row)
+
+})
+
+} catch(err){
+
+console.error("Vendor load error:", err)
+
+}
+
+}
+
 function editProduct(id){
 window.location.href = `/edit-product.html?id=${id}`
 }
 
+function deleteProduct(id){
+
+fetch(`/api/delete-product?id=${id}`,{
+method:"DELETE"
+})
+.then(()=>loadProducts())
+
+}
+
 function logout(){
 localStorage.removeItem("kultUser")
-window.location.href = "/login.html"
+window.location.href="/login.html"
 }
-loadVendors()
+
 loadProducts()
+loadVendors()
