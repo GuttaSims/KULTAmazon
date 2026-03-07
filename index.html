@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<button onclick="logout()" class="logout-btn">Logout</button>
 <title>KULT Creator Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -260,6 +259,11 @@ loadProducts()
 loadVendors()
 
 </script>
+    <h2>Welcome <span id="usernameDisplay"></span></h2>
+
+<button onclick="logout()">Logout</button>
+
+<script src="dashboard.js"></script>
 <button onclick="logout()">Logout</button>
 </body>
 </html>
