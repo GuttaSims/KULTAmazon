@@ -1,84 +1,48 @@
-const API = "/api"
+const API="/api/get-products"
 
-document.addEventListener("DOMContentLoaded", async () => {
+const grid=document.getElementById("productGrid")
+const logout=document.getElementById("logoutBtn")
 
-const user = JSON.parse(localStorage.getItem("user"))
-
-if(!user){
-window.location.href = "/login.html"
-return
-}
-
-document.getElementById("logoutBtn").onclick = logout
-
-loadProducts(user.sl_uuid)
-loadVendors(user.sl_uuid)
-
-})
-
-function logout(){
-
+logout.onclick=()=>{
 localStorage.removeItem("user")
-window.location.href = "/login.html"
-
+window.location="login.html"
 }
 
-async function loadProducts(uuid){
+async function loadProducts(){
 
-const res = await fetch(`${API}/get-products?creator_uuid=${uuid}`)
-const products = await res.json()
+const res=await fetch(API)
 
-const container = document.getElementById("products")
-const dropdown = document.getElementById("productSelect")
+const products=await res.json()
 
-container.innerHTML = ""
-dropdown.innerHTML = ""
+grid.innerHTML=""
 
 products.forEach(p=>{
 
-const card = document.createElement("div")
+const card=document.createElement("div")
+card.className="product-card"
 
-card.className = "productCard"
+card.innerHTML=`
 
-card.innerHTML = `
+<img src="${p.image || 'https://via.placeholder.com/300'}">
+
 <h3>${p.product_name}</h3>
-<p>Price: ${p.price}L</p>
-<p>Delivery Item: ${p.delivery_item}</p>
+
+<p>${p.price}L</p>
+
+<button class="editBtn" onclick="editProduct('${p.product_id}')">
+Edit
+</button>
+
 `
 
-container.appendChild(card)
-
-const option = document.createElement("option")
-option.value = p.product_id
-option.textContent = p.product_name
-
-dropdown.appendChild(option)
+grid.appendChild(card)
 
 })
 
 }
 
-async function loadVendors(uuid){
-
-const res = await fetch(`${API}/get-vendors?creator_uuid=${uuid}`)
-const vendors = await res.json()
-
-const dropdown = document.getElementById("vendorSelect")
-dropdown.innerHTML = ""
-
-vendors.forEach(v=>{
-
-if(v.active !== false){
-
-const option = document.createElement("option")
-
-option.value = v.vendor_uuid
-option.textContent = v.vendor_uuid
-
-dropdown.appendChild(option)
-
+function editProduct(id){
+window.location="edit.html?id="+id
 }
 
-})
-
-}
+loadProducts()
