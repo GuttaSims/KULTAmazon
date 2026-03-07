@@ -1,24 +1,157 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>KULT Vendor Dashboard</title>
+<title>KULT Marketplace Dashboard</title>
 
-<link rel="stylesheet" href="/style.css">
+<style>
 
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f0f0f;
+    color:white;
+}
+
+header{
+    padding:20px;
+    font-size:22px;
+    font-weight:bold;
+    border-bottom:1px solid #222;
+}
+
+.container{
+    padding:30px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:#151515;
+    border-radius:12px;
+    overflow:hidden;
+    transition:.2s;
+}
+
+.card:hover{
+    transform:scale(1.02);
+}
+
+.image{
+    width:100%;
+    height:180px;
+    background:#222;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.info{
+    padding:15px;
+}
+
+.name{
+    font-size:16px;
+    margin-bottom:6px;
+}
+
+.price{
+    color:#00ffae;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.editBtn{
+    width:100%;
+    padding:8px;
+    background:#2b2b2b;
+    border:none;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.editBtn:hover{
+    background:#3a3a3a;
+}
+
+</style>
 </head>
+
 
 <body>
 
-<h1>KULT Vendor Dashboard</h1>
+<header>
+KULT Marketplace Dashboard
+</header>
 
-<button onclick="logout()">Logout</button>
+<div class="container">
 
-<h2>My Products</h2>
+<div class="grid" id="products"></div>
 
-<div id="productsGrid"></div>
+</div>
 
-<script src="/script.js"></script>
+
+<script>
+
+const owner = localStorage.getItem("username");
+
+async function loadProducts(){
+
+const res = await fetch(`/api/get-products?owner=${owner}`);
+const products = await res.json();
+
+const grid = document.getElementById("products");
+grid.innerHTML="";
+
+products.forEach(product=>{
+
+const card = document.createElement("div");
+card.className="card";
+
+card.innerHTML=`
+
+<div class="image">
+<img src="${product.image || 'https://via.placeholder.com/300'}">
+</div>
+
+<div class="info">
+
+<div class="name">${product.name}</div>
+
+<div class="price">L$ ${product.price}</div>
+
+<button class="editBtn" onclick="editProduct('${product.id}')">
+Edit Product
+</button>
+
+</div>
+
+`;
+
+grid.appendChild(card);
+
+});
+
+}
+
+function editProduct(id){
+alert("Edit product "+id);
+}
+
+loadProducts();
+
+</script>
+
 
 </body>
 </html>
