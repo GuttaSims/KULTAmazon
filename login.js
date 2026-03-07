@@ -1,48 +1,65 @@
-const { createClient } = require("@supabase/supabase-js")
+document.addEventListener("DOMContentLoaded", () => {
 
-export default async function handler(req, res) {
+  // If already logged in, go to dashboard
+  const existingUser = localStorage.getItem("kultUser")
+  if (existingUser) {
+    window.location.href = "/index.html"
+    return
+  }
 
-try {
+  const form = document.getElementById("loginForm")
+  const error = document.getElementById("error")
 
-if (req.method !== "POST") {
-return res.status(405).json({ error: "Method not allowed" })
-}
+  if (!form) {
+    console.error("Login form not found")
+    return
+  }
 
-const supabase = createClient(
-process.env.SUPABASE_URL,
-process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+  form.addEventListener("submit", async (e) => {
 
-const { username, password } = req.body
+    e.preventDefault()
 
-if (!username || !password) {
-return res.json({ error: "Missing credentials" })
-}
+    const username = document.getElementById("username").value.trim()
+    const password = document.getElementById("password").value.trim()
 
-const { data, error } = await supabase
-.from("vendors")
-.select("*")
-.eq("username", username)
-.single()
+    error.innerText = ""
 
-if (error || !data) {
-return res.json({ error: "User not found" })
-}
+    try {
 
-if (data.password !== password) {
-return res.json({ error: "Incorrect password" })
-}
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      })
 
-return res.json({ success: true })
+      const data = await response.json()
 
-} catch (err) {
+      if (data.success) {
 
-console.error("LOGIN ERROR:", err)
+        // store logged-in user
+        localStorage.setItem("kultUser", username)
 
-return res.status(500).json({
-error: "Server error"
+        // redirect to dashboard
+        window.location.href = "/index.html"
+
+      } else {
+
+        error.innerText = data.error || "Login failed"
+
+      }
+
+    } catch (err) {
+
+      console.error("Login error:", err)
+      error.innerText = "Server error"
+
+    }
+
+  })
+
 })
-
-}
-
-}
