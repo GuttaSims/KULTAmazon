@@ -1,252 +1,46 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta charset="UTF-8">
-<title>KULT Creator Dashboard</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-body{
-    background:#0b0b0f;
-    font-family:Segoe UI, Arial;
-    color:white;
-    margin:0;
-}
-
-header{
-    padding:25px;
-    background:#0f0f16;
-    border-bottom:1px solid #222;
-    box-shadow:0 0 20px rgba(255,0,140,0.2);
-}
-
-header h1{
-    margin:0;
-    font-size:28px;
-    color:#ff00a8;
-    text-shadow:0 0 10px #ff00a8;
-}
-
-.container{
-    padding:40px;
-    max-width:1100px;
-    margin:auto;
-}
-
-.card{
-    background:#12121a;
-    border-radius:12px;
-    padding:25px;
-    margin-bottom:30px;
-    box-shadow:0 0 20px rgba(255,0,140,0.15);
-}
-
-.card h2{
-    margin-top:0;
-    color:#ff00a8;
-}
-
-input, select{
-    padding:12px;
-    border:none;
-    border-radius:6px;
-    margin-right:10px;
-    background:#1d1d28;
-    color:white;
-}
-
-button{
-    padding:12px 18px;
-    border:none;
-    border-radius:6px;
-    background:#ff00a8;
-    color:white;
-    cursor:pointer;
-    font-weight:bold;
-    box-shadow:0 0 12px #ff00a8;
-    transition:0.2s;
-}
-
-button:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 20px #ff00a8;
-}
-
-.product{
-    background:#151520;
-    padding:15px;
-    border-radius:8px;
-    margin-bottom:10px;
-    display:flex;
-    justify-content:space-between;
-}
-
-.glow{
-    color:#ff00a8;
-    text-shadow:0 0 10px #ff00a8;
-}
-
-</style>
+<title>KULT Vendor Dashboard</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-<h1>KULT Creator Dashboard</h1>
-</header>
-
 <div class="container">
 
-<div class="card">
+<h1>KULT Vendor Dashboard</h1>
+
+<button id="logoutBtn" class="logout">Logout</button>
 
 <h2>Your Products</h2>
-
 <div id="products"></div>
-
-<button onclick="logout()">Logout</button>
-
-<script src="dashboard.js"></script>
-
-<div class="card">
 
 <h2>Assign Product To Vendor</h2>
 
-<select id="vendorSelect"></select>
+<div class="assignBox">
 
 <select id="productSelect"></select>
 
-<button onclick="assignProduct()">Assign</button>
+<select id="vendorSelect"></select>
+
+<select id="boxType">
+<option value="small">Small Box</option>
+<option value="medium">Medium Box</option>
+<option value="large">Large Box</option>
+</select>
+
+<input id="vendorPrice" placeholder="Vendor Price">
+
+<button id="assignBtn">Assign</button>
 
 </div>
 
 </div>
-
-
-<script>
-
-const supabase = window.supabase.createClient(
-"https://ppfptnbnafnyjvpjlqch.supabase.co",
-"YOUR_PUBLIC_ANON_KEY"
-)
-
-async function loadProducts(){
-
-let {data} = await supabase
-.from("products")
-.select("*")
-
-let list = document.getElementById("products")
-let select = document.getElementById("productSelect")
-
-list.innerHTML=""
-select.innerHTML=""
-
-data.forEach(p=>{
-
-list.innerHTML += `
-<div class="product">
-<span>${p.product_name}</span>
-<span class="glow">${p.price}L</span>
-</div>
-`
-
-select.innerHTML += `
-<option value="${p.product_id}">
-${p.product_name}
-</option>
-`
-
-})
-
-}
-
-async function loadVendors(){
-
-let {data} = await supabase
-.from("vendors")
-.select("*")
-
-let select = document.getElementById("vendorSelect")
-
-select.innerHTML=""
-
-data.forEach(v=>{
-
-select.innerHTML += `
-<option value="${v.vendor_uuid}">
-${v.vendor_uuid}
-</option>
-`
-
-})
-
-}
-
-async function addProduct(){
-
-let name=document.getElementById("name").value
-let price=document.getElementById("price").value
-let box=document.getElementById("box").value
-
-await fetch("/api/add-product",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-product_name:name,
-price:price,
-box_size:box
-
-})
-
-})
-
-loadProducts()
-
-}
-
-async function assignProduct(){
-
-let vendor=document.getElementById("vendorSelect").value
-let product=document.getElementById("productSelect").value
-
-await fetch("/api/assign-product",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-vendor_uuid:vendor,
-product_id:product
-
-})
-
-})
-
-alert("Product Assigned!")
-
-}
-
-loadProducts()
-loadVendors()
-
-</script>
-    <h2>Welcome <span id="usernameDisplay"></span></h2>
-
-<button onclick="logout()">Logout</button>
 
 <script src="dashboard.js"></script>
-<button onclick="logout()">Logout</button>
+
 </body>
 </html>
