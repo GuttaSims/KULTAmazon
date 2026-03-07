@@ -1,92 +1,54 @@
 async function loadProducts(){
 
-try{
+const res=await fetch("/api/products");
 
-const res = await fetch("/api/products");
+const data=await res.json();
 
-if(!res.ok) throw new Error("API error");
+const container=document.getElementById("products");
 
-const data = await res.json();
+container.innerHTML="";
 
-const grid = document.getElementById("products");
+(data.products||[]).forEach(p=>{
 
-grid.innerHTML="";
+const div=document.createElement("div");
 
-(data.products || []).forEach(p=>{
-
-const card=document.createElement("div");
-card.className="product-card";
-
-card.innerHTML=`
-<h3>${p.name}</h3>
-<p>${p.price}L</p>
-<button onclick="editProduct('${p.id}')">Edit</button>
+div.innerHTML=`
+<b>${p.name}</b> - ${p.price}L
 `;
 
-grid.appendChild(card);
+container.appendChild(div);
 
 });
 
-}catch(e){
-
-console.error("Products failed",e);
-
 }
-
-}
-
 
 
 async function loadVendors(){
 
-try{
+const res=await fetch("/api/get-vendors");
 
-const res = await fetch("/api/get-vendors");
-
-if(!res.ok) throw new Error("API error");
-
-const data = await res.json();
+const data=await res.json();
 
 const table=document.getElementById("vendorTable");
 
 table.innerHTML="";
 
-(data.vendors || []).forEach(v=>{
-
-const lastSeen=new Date(v.last_seen);
-const online=(Date.now()-lastSeen.getTime())<120000;
+data.vendors.forEach(v=>{
 
 const row=document.createElement("tr");
 
 row.innerHTML=`
-<td>${v.name||"Vendor"}</td>
-<td>${v.region||"-"}</td>
-<td>${v.position||"-"}</td>
-<td class="${online?"online":"offline"}">
-${online?"ONLINE":"OFFLINE"}
-</td>
+<td>${v.name}</td>
+<td>${v.region}</td>
+<td>${v.position}</td>
+<td>ONLINE</td>
 `;
 
 table.appendChild(row);
 
 });
 
-}catch(e){
-
-console.error("Vendor load failed",e);
-
 }
-
-}
-
-
-
-function editProduct(id){
-
-window.location="/edit-product.html?id="+id;
-
-}
-
 
 
 async function logout(){
@@ -98,12 +60,5 @@ window.location="/login.html";
 }
 
 
-
-document.getElementById("logoutBtn").addEventListener("click",logout);
-
-
-
 loadProducts();
 loadVendors();
-
-setInterval(loadVendors,10000);
