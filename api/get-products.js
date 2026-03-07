@@ -11,23 +11,27 @@ process.env.SUPABASE_SERVICE_ROLE_KEY
 
 const { vendor } = req.query
 
+if (!vendor) {
+return res.status(400).json({ products: [] })
+}
+
 const { data, error } = await supabase
 .from("products")
 .select("*")
 .eq("vendor_username", vendor)
 
-if(error){
-console.error(error)
+if (error) {
+console.error("Supabase error:", error)
 return res.status(500).json({ products: [] })
 }
 
-return res.json({
+return res.status(200).json({
 products: data || []
 })
 
-} catch(err){
+} catch (err) {
 
-console.error(err)
+console.error("API crash:", err)
 
 return res.status(500).json({
 products: []
