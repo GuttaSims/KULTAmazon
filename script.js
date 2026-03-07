@@ -28,42 +28,51 @@ console.error("Vendor load error:", err)
 
 }
 
-}
 async function loadProducts(){
 
 const vendor = localStorage.getItem("kultUser")
 
 if(!vendor) return
 
-try {
+try{
 
 const res = await fetch(`/api/get-products?vendor=${vendor}`)
 const data = await res.json()
 
-const table = document.getElementById("productsTable")
+const grid = document.getElementById("productsGrid")
 
-if(!table) return
+grid.innerHTML = ""
 
-data.products.forEach(product => {
+data.products.forEach(product=>{
 
-const row = document.createElement("tr")
+const card = document.createElement("div")
 
-row.innerHTML = `
-<td>${product.name}</td>
-<td>$${product.price}</td>
-<td>${product.stock}</td>
-<td>
+card.className = "product-card"
+
+card.innerHTML = `
+<img src="${product.image || '/placeholder.png'}">
+
+<div class="product-name">${product.name}</div>
+
+<div class="product-price">$${product.price}</div>
+
+<div class="product-stock">
+Stock: ${product.stock}
+</div>
+
+<div class="product-buttons">
 <button onclick="editProduct(${product.id})">Edit</button>
-</td>
+<button onclick="deleteProduct(${product.id})">Delete</button>
+</div>
 `
 
-table.appendChild(row)
+grid.appendChild(card)
 
 })
 
-} catch(err){
+}catch(err){
 
-console.error("Product load error:", err)
+console.error("Products error:",err)
 
 }
 
