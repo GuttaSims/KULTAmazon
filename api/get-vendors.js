@@ -1,21 +1,40 @@
-import { createClient } from "@supabase/supabase-js"
+async function fetchVendors() {
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE
-)
+  const response = await fetch("/api/get-vendors")
+  const vendors = await response.json()
 
-export default async function handler(req, res) {
+  const container = document.getElementById("vendorsContainer")
+  container.innerHTML = ""
 
-  const { data, error } = await supabase
-    .from("vendors")
-    .select("*")
+  const now = Date.now()
 
-  if (error) {
-    console.error(error)
-    return res.status(500).json({ error: error.message })
-  }
+  vendors.forEach(vendor => {
 
-  res.status(200).json(data)
+    const lastSeen = new Date(vendor.last_seen).getTime()
 
+    const online = now - lastSeen < 120000
+
+    const card = document.createElement("div")
+    card.className = "product-card"
+
+    card.innerHTML = `
+      <h3>${vendor.vendor_name}</h3>
+      <p>${vendor.region}</p>
+      <p>${vendor.position}</p>
+
+      <p style="color:${online ? "#00ff88" : "#ff4444"}">
+        ${online ? "ONLINE" : "OFFLINE"}
+      </p>
+
+      <button onclick="manageVendor('${vendor.vendor_uuid}')">
+        Manage
+      </button>
+    `
+
+    container.appendChild(card)
+
+  })
 }
+
+fetchVendors()
+setInterval(fetchVendors, 10000)
