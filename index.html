@@ -1,28 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>KULT Vendor Dashboard</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<title>Vendor Dashboard</title>
 
+<style>
+body{
+    font-family: Arial;
+    background:#111;
+    color:white;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #333;
+}
+
+th{
+    background:#222;
+}
+
+.online{
+    color:#00ff88;
+}
+
+.offline{
+    color:#ff4444;
+}
+</style>
+
+</head>
 <body>
 
-<div class="dashboard">
+<h2>My Vendors</h2>
 
-<h1>KULT Vendor Dashboard</h1>
+<table id="vendorsTable">
 
-<button id="logoutBtn" class="logout">Logout</button>
+<thead>
+<tr>
+<th>Vendor UUID</th>
+<th>Creator</th>
+<th>Status</th>
+<th>Last Seen</th>
+</tr>
+</thead>
 
-<h2>Your Products</h2>
+<tbody id="vendorsBody"></tbody>
 
-<div id="productGrid" class="product-grid"></div>
+</table>
 
-</div>
-<h2>Vendor List</h2>
 
-<div id="vendorsContainer" class="product-grid"></div>
-<script src="dashboard.js"></script>
+<script>
+
+async function loadVendors(){
+
+    try{
+
+        const res = await fetch("/api/get-vendors");
+        const data = await res.json();
+
+        const vendors = data.vendors || [];
+
+        const table = document.getElementById("vendorsBody");
+        table.innerHTML = "";
+
+        vendors.forEach(vendor => {
+
+            const tr = document.createElement("tr");
+
+            const lastSeen = new Date(vendor.last_seen);
+            const now = new Date();
+
+            const secondsAgo = (now - lastSeen) / 1000;
+
+            const online = secondsAgo < 90;
+
+            tr.innerHTML = `
+                <td>${vendor.vendor_uuid}</td>
+                <td>${vendor.creator_uuid}</td>
+                <td class="${online ? 'online' : 'offline'}">
+                    ${online ? "ONLINE" : "OFFLINE"}
+                </td>
+                <td>${lastSeen.toLocaleString()}</td>
+            `;
+
+            table.appendChild(tr);
+
+        });
+
+    }
+    catch(err){
+
+        console.error("Vendor load error:", err);
+
+    }
+
+}
+
+loadVendors();
+
+setInterval(loadVendors, 10000);
+
+</script>
 
 </body>
 </html>
