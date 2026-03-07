@@ -1,17 +1,19 @@
-import { supabase } from "/api/supabase.js"
+import supabase from "./supabase.js";
 
-export default async function handler(req,res){
+export default async function handler(req, res) {
 
-try{
+  const { owner } = req.query;
 
-const { data, error } = await supabase
-.from("products")
-.select("*")
-.order("id",{ascending:false})
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("owner", owner);
 
-if(error){
-console.error(error)
-return res.status(500).json({products:[]})
+  if (error) {
+    return res.status(500).json(error);
+  }
+
+  res.status(200).json(data);
 }
 
 res.status(200).json({
