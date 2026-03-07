@@ -2,20 +2,29 @@ import { createClient } from '@supabase/supabase-js'
 
 export default async function handler(req, res) {
 
-  try {
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE
 
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE
-    )
+if (!supabaseUrl || !supabaseKey) {
+  return res.status(500).json({
+    error: "Server crashed",
+    details: "supabaseKey is required."
+  })
+}
 
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-    if (error) {
-      return res.status(500).json({ error: error.message })
-    }
+const { data, error } = await supabase
+  .from('products')
+  .select('*')
+
+if (error) {
+  return res.status(500).json(error)
+}
+
+res.status(200).json(data)
+
+}
 
     return res.status(200).json(data)
 
