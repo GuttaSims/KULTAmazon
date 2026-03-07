@@ -2,37 +2,24 @@
 <html>
 
 <head>
-<meta charset="UTF-8">
-<title>KULT Vendor Login</title>
-<link rel="stylesheet" href="style.css">
+<title>KULT Vendor System</title>
+<link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
 
-<div class="container">
+<h1>KULT Vendor System</h1>
 
-<h2>KULT Vendor System</h2>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
 
-<form id="loginForm">
+<button onclick="login()">Login</button>
 
-<input type="text" id="username" placeholder="Username" required>
+<p>No account? <a href="#">Register here</a></p>
 
-<input type="password" id="password" placeholder="Password" required>
+<p id="error"></p>
 
-<button type="submit">Login</button>
-
-</form>
-
-<p>
-No account?
-<a href="register.html">Register here</a>
-</p>
-
-<p id="message"></p>
-
-</div>
-
-<script src="login.js"></script>
+<script src="/login.js"></script>
 
 </body>
 </html>
