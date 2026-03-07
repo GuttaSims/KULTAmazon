@@ -1,3 +1,7 @@
+if(localStorage.getItem("kultUser")){
+window.location.href = "index.html";
+}
+
 document.getElementById("loginBtn").addEventListener("click", login);
 
 async function login(){
@@ -16,8 +20,8 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-username,
-password
+username:username,
+password:password
 })
 });
 
@@ -31,14 +35,14 @@ window.location.href = "index.html";
 
 }else{
 
-error.innerText = data.error || "Login failed";
+error.innerText = data.error || "Invalid login";
 
 }
 
 }catch(err){
 
-error.innerText = "Server error";
 console.error(err);
+error.innerText = "Server error";
 
 }
 
