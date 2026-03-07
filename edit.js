@@ -32,3 +32,8 @@ alert("Saved")
 window.location="/dashboard.html"
 
 }
+function goBack(){
+
+window.location.href = "/dashboard.html"
+
+}
