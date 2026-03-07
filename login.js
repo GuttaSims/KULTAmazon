@@ -1,56 +1,30 @@
-document.addEventListener("DOMContentLoaded", () => {
+async function login(){
 
-const form = document.getElementById("loginForm")
-const message = document.getElementById("message")
+const username=document.getElementById("username").value;
+const password=document.getElementById("password").value;
 
-form.addEventListener("submit", async (e) => {
+const res=await fetch("/api/login",{
 
-e.preventDefault()
+method:"POST",
 
-const username = document.getElementById("username").value
-const password = document.getElementById("password").value
-
-try {
-
-const response = await fetch("/api/login", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
+headers:{
+"Content-Type":"application/json"
 },
 
-body: JSON.stringify({
-username,
-password
-})
+body:JSON.stringify({username,password})
 
-})
+});
 
-const data = await response.json()
-
-console.log(data)
+const data=await res.json();
 
 if(data.success){
 
-localStorage.setItem("user", JSON.stringify(data.user))
-
-window.location.href = "/index.html"
+window.location="/dashboard.html";
 
 }else{
 
-message.innerText = "Invalid username or password"
+document.getElementById("error").innerText=data.error;
 
 }
 
-}catch(err){
-
-message.innerText = "Server error"
-
-console.error(err)
-
 }
-
-})
-
-})
