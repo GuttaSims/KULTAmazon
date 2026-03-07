@@ -1,26 +1,40 @@
-async function loadVendors(){
+async function loadProducts(){
 
-try {
+const vendor = localStorage.getItem("kultUser")
 
-const res = await fetch("/api/get-vendors")
-
-const data = await res.json()
-
-const table = document.querySelector("table")
-
-if(!data.vendors || data.vendors.length === 0){
+if(!vendor){
+window.location.href = "/login.html"
 return
 }
 
-data.vendors.forEach(vendor => {
+try {
+
+const res = await fetch(`/api/get-products?vendor=${vendor}`)
+
+const data = await res.json()
+
+const table = document.getElementById("productsTable")
+
+table.innerHTML = `
+<tr>
+<th>Name</th>
+<th>Price</th>
+<th>Stock</th>
+<th>Edit</th>
+</tr>
+`
+
+data.products.forEach(product => {
 
 const row = document.createElement("tr")
 
 row.innerHTML = `
-<td>${vendor.username}</td>
-<td>${vendor.region || "-"}</td>
-<td>${vendor.position || "-"}</td>
-<td>${vendor.status || "offline"}</td>
+<td>${product.name}</td>
+<td>$${product.price}</td>
+<td>${product.stock}</td>
+<td>
+<button onclick="editProduct(${product.id})">Edit</button>
+</td>
 `
 
 table.appendChild(row)
@@ -29,9 +43,15 @@ table.appendChild(row)
 
 } catch(err){
 
-console.error("Vendor load error:", err)
+console.error("Product load error:", err)
 
 }
+
+}
+
+function editProduct(id){
+
+window.location.href = `/edit-product.html?id=${id}`
 
 }
 
@@ -43,4 +63,4 @@ window.location.href = "/login.html"
 
 }
 
-loadVendors()
+loadProducts()
