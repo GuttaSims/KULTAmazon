@@ -1,41 +1,35 @@
-const user = localStorage.getItem("kultUser");
-
-if(!user){
-
-window.location.href = "login.html";
-
-}
-
 async function loadVendors(){
 
-try{
+try {
 
-const res = await fetch("/api/get-vendors");
+const res = await fetch("/api/get-vendors")
 
-const data = await res.json();
+const data = await res.json()
 
-const table = document.getElementById("vendorTable");
+const table = document.querySelector("table")
 
-table.innerHTML = "";
+if(!data.vendors || data.vendors.length === 0){
+return
+}
 
 data.vendors.forEach(vendor => {
 
-const row = document.createElement("tr");
+const row = document.createElement("tr")
 
 row.innerHTML = `
-<td>${vendor.name}</td>
-<td>${vendor.region}</td>
-<td>${vendor.position}</td>
-<td>${vendor.online ? "ONLINE" : "OFFLINE"}</td>
-`;
+<td>${vendor.username}</td>
+<td>${vendor.region || "-"}</td>
+<td>${vendor.position || "-"}</td>
+<td>${vendor.status || "offline"}</td>
+`
 
-table.appendChild(row);
+table.appendChild(row)
 
-});
+})
 
-}catch(err){
+} catch(err){
 
-console.error(err);
+console.error("Vendor load error:", err)
 
 }
 
@@ -43,10 +37,10 @@ console.error(err);
 
 function logout(){
 
-localStorage.removeItem("kultUser");
+localStorage.removeItem("kultUser")
 
-window.location.href = "login.html";
+window.location.href = "/login.html"
 
 }
 
-loadVendors();
+loadVendors()
