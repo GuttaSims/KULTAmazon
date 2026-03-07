@@ -5,28 +5,29 @@ export default async function handler(req, res) {
 try {
 
 const supabase = createClient(
-process.env.SUPABASE_URL,
-process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
 const { data, error } = await supabase
-.from("vendors")
-.select("username, region, position, status")
+  .from("vendors")
+  .select("*")
 
-if(error){
-return res.status(500).json({ error: error.message })
+if (error) {
+  console.error(error)
+  return res.status(500).json({ vendors: [] })
 }
 
-return res.json({
-vendors: data || []
+return res.status(200).json({
+  vendors: data || []
 })
 
-} catch(err){
+} catch (err) {
 
-console.error("GET VENDORS ERROR:", err)
+console.error("API error:", err)
 
 return res.status(500).json({
-vendors: []
+  vendors: []
 })
 
 }
