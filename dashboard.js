@@ -1,124 +1,139 @@
-// Supabase connection
-const supabase = window.supabase.createClient(
-"https://ppfptnbnafnjyvpjlqch.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZnB0bmJuYWZueWp2cGpscWNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NTAyNTAsImV4cCI6MjA4ODMyNjI1MH0.US9eA7wEKFv3U6v4_nhlhl-pr62tKfYctZd46Gj9sIg"
-);
+// Check if user is logged in
+const user = JSON.parse(localStorage.getItem("user"))
 
-
-// -----------------------------
-// Check login session
-// -----------------------------
-
-async function checkUser() {
-
-const { data: { session } } = await supabase.auth.getSession()
-
-if(!session){
-
-window.location = "login.html"
-
+if (!user) {
+window.location.href = "/login.html"
 }
 
+// Display username
+const usernameDisplay = document.getElementById("usernameDisplay")
+if (usernameDisplay) {
+usernameDisplay.innerText = user.username
 }
 
-checkUser()
-
-
-// -----------------------------
-// Load products
-// -----------------------------
-
-async function loadProducts(){
-
-const { data, error } = await supabase
-.from("products")
-.select("*")
-
-if(error){
-
-console.log("Error loading products:", error)
-return
-
-}
-
-const container = document.getElementById("products")
-
-container.innerHTML = ""
-
-data.forEach(product => {
-
-container.innerHTML += `
-<div class="product-card">
-
-<div class="product-name">
-${product.name}
-</div>
-
-<div class="product-price">
-${product.price}L
-</div>
-
-</div>
-`
-
-})
-
-}
-
-loadProducts()
-
-
-// -----------------------------
-// Add product
-// -----------------------------
-
-async function addProduct(){
-
-const name = document.getElementById("name").value
-const price = document.getElementById("price").value
-
-if(!name || !price){
-
-alert("Fill out all fields")
-return
-
-}
-
-const { data: { user } } = await supabase.auth.getUser()
-
-const { error } = await supabase
-.from("products")
-.insert([
-{
-name: name,
-price: price,
-user_id: user.id
-}
-])
-
-if(error){
-
-alert(error.message)
-return
-
-}
-
-document.getElementById("name").value = ""
-document.getElementById("price").value = ""
-
-loadProducts()
-
-}
-
-
-// -----------------------------
-// Logout
-// -----------------------------
-
-async function logout() {
+// Logout function
+function logout() {
 
 localStorage.removeItem("user")
 
 window.location.href = "/login.html"
 
 }
+
+window.logout = logout
+
+
+
+// LOAD PRODUCTS
+async function loadProducts() {
+
+const res = await fetch("/api/get-products", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+user_id: user.id
+})
+})
+
+const data = await res.json()
+
+const container = document.getElementById("productList")
+
+if (!container) return
+
+container.innerHTML = ""
+
+data.products.forEach(product => {
+
+const div = document.createElement("div")
+div.className = "productCard"
+
+div.innerHTML = `
+<h3>${product.name}</h3>
+<p>Price: L$${product.price}</p>
+<p>Box Size: ${product.box_size}</p>
+`
+
+container.appendChild(div)
+
+})
+
+}
+
+
+
+// LOAD VENDORS
+async function loadVendors() {
+
+const res = await fetch("/api/get-vendors", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+user_id: user.id
+})
+})
+
+const data = await res.json()
+
+const container = document.getElementById("vendorList")
+
+if (!container) return
+
+container.innerHTML = ""
+
+data.vendors.forEach(vendor => {
+
+const div = document.createElement("div")
+div.className = "vendorCard"
+
+div.innerHTML = `
+<h3>Vendor UUID</h3>
+<p>${vendor.vendor_uuid}</p>
+<p>Product: ${vendor.product_id || "None Assigned"}</p>
+`
+
+container.appendChild(div)
+
+})
+
+}
+
+
+
+// ASSIGN PRODUCT TO VENDOR
+async function assignProduct(vendor_uuid, product_id) {
+
+await fetch("/api/assign-product", {
+
+method: "POST",
+
+headers: {
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+vendor_uuid,
+product_id
+})
+
+})
+
+alert("Product assigned!")
+
+loadVendors()
+
+}
+
+
+
+window.assignProduct = assignProduct
+
+
+
+// INITIAL LOAD
+loadProducts()
+loadVendors()
