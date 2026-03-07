@@ -1,41 +1,35 @@
-const API="/api/get-products"
+async function fetchVendors() {
 
-const grid=document.getElementById("productGrid")
+  const response = await fetch("/api/get-vendors")
+  const vendors = await response.json()
 
-async function loadProducts(){
+  const table = document.getElementById("vendorsBody")
+  table.innerHTML = ""
 
-const res=await fetch(API)
+  const now = Date.now()
 
-const products=await res.json()
+  vendors.forEach(vendor => {
 
-products.forEach(p=>{
+    const lastSeen = new Date(vendor.last_seen).getTime()
 
-const card=document.createElement("div")
+    const online = now - lastSeen < 120000
 
-card.className="product-card"
+    const row = document.createElement("tr")
 
-card.innerHTML=`
+    row.innerHTML = `
+      <td>${vendor.vendor_name}</td>
+      <td>${vendor.region}</td>
+      <td>${vendor.position}</td>
+      <td style="color:${online ? "lime" : "red"}">
+        ${online ? "ONLINE" : "OFFLINE"}
+      </td>
+    `
 
-<img src="${p.image || 'https://via.placeholder.com/300'}">
+    table.appendChild(row)
 
-<h3>${p.product_name}</h3>
-
-<p>${p.price}L</p>
-
-<button onclick="editProduct('${p.product_id}')">
-Edit
-</button>
-
-`
-
-grid.appendChild(card)
-
-})
-
+  })
 }
 
-function editProduct(id){
-window.location="edit.html?id="+id
-}
+fetchVendors()
 
-loadProducts()
+setInterval(fetchVendors, 10000)
