@@ -1,57 +1,36 @@
-<h2>KULT Creator Login</h2>
+<!DOCTYPE html>
+<html>
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+<head>
+<meta charset="UTF-8">
+<title>KULT Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
-<button onclick="login()">Login</button>
-<button onclick="signup()">Signup</button>
+<body>
 
-<script src="supabase.js"></script>
+<div class="container">
 
-<script>
+<h2>KULT Vendor System</h2>
 
-async function login(){
+<form id="loginForm">
 
-const email = document.getElementById("email").value
-const password = document.getElementById("password").value
+<input type="text" id="username" placeholder="Username" required>
 
-const { data, error } = await supabase.auth.signInWithPassword({
-email: email,
-password: password
-})
+<input type="password" id="password" placeholder="Password" required>
 
-if(error){
+<button type="submit">Login</button>
 
-alert(error.message)
+</form>
 
-}else{
+<p>
+Don't have an account?
+<a href="register.html">Register here</a>
+</p>
 
-window.location="dashboard.html"
+</div>
 
-}
+<script src="login.js"></script>
 
-}
-
-async function signup(){
-
-const email = document.getElementById("email").value
-const password = document.getElementById("password").value
-
-const { error } = await supabase.auth.signUp({
-email: email,
-password: password
-})
-
-if(error){
-
-alert(error.message)
-
-}else{
-
-alert("Account created! Login now.")
-
-}
-
-}
-
-</script>
+</body>
+</html>
