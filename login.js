@@ -1,8 +1,8 @@
-const form = document.getElementById("loginForm")
-
 if(localStorage.getItem("kultUser")){
 window.location.href = "index.html"
 }
+
+const form = document.getElementById("loginForm")
 
 form.addEventListener("submit", async function(e){
 
