@@ -1,28 +1,29 @@
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
- process.env.SUPABASE_URL,
- process.env.SUPABASE_SERVICE_ROLE
-);
+import { createClient } from '@supabase/supabase-js'
 
 export default async function handler(req, res) {
 
- try {
+  try {
 
-  const { data, error } = await supabase
-  .from("products")
-  .select("*");
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE
+    )
 
-  if (error) {
-   return res.status(500).json({ error: error.message });
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+
+    if (error) {
+      return res.status(500).json({ error: error.message })
+    }
+
+    return res.status(200).json(data)
+
+  } catch (err) {
+    return res.status(500).json({
+      error: "Server crashed",
+      details: err.message
+    })
   }
-
-  res.status(200).json(data);
-
- } catch (err) {
-
-  res.status(500).json({ error: err.message });
-
- }
 
 }
