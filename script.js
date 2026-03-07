@@ -1,45 +1,52 @@
-const form = document.getElementById("registerForm")
+const user = localStorage.getItem("kultUser");
 
-if(form){
+if(!user){
 
-form.addEventListener("submit", async (e)=>{
-
-e.preventDefault()
-
-const username = document.getElementById("username").value
-const email = document.getElementById("email").value
-const password = document.getElementById("password").value
-const sl_name = document.getElementById("sl_name").value
-const sl_uuid = document.getElementById("sl_uuid").value
-
-const res = await fetch("/api/register",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-username,
-email,
-password,
-sl_name,
-sl_uuid
-})
-})
-
-const data = await res.json()
-
-if(data.success){
-
-alert("Account created!")
-
-window.location.href="/login.html"
-
-}else{
-
-alert(data.error)
+window.location.href = "login.html";
 
 }
 
-})
+async function loadVendors(){
+
+try{
+
+const res = await fetch("/api/get-vendors");
+
+const data = await res.json();
+
+const table = document.getElementById("vendorTable");
+
+table.innerHTML = "";
+
+data.vendors.forEach(vendor => {
+
+const row = document.createElement("tr");
+
+row.innerHTML = `
+<td>${vendor.name}</td>
+<td>${vendor.region}</td>
+<td>${vendor.position}</td>
+<td>${vendor.online ? "ONLINE" : "OFFLINE"}</td>
+`;
+
+table.appendChild(row);
+
+});
+
+}catch(err){
+
+console.error(err);
 
 }
+
+}
+
+function logout(){
+
+localStorage.removeItem("kultUser");
+
+window.location.href = "login.html";
+
+}
+
+loadVendors();
