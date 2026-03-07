@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta charset="UTF-8">
 <title>KULT Vendor Dashboard</title>
@@ -9,34 +8,15 @@
 
 <body>
 
-<div class="container">
+<div class="dashboard">
 
 <h1>KULT Vendor Dashboard</h1>
 
 <button id="logoutBtn" class="logout">Logout</button>
 
 <h2>Your Products</h2>
-<div id="products"></div>
 
-<h2>Assign Product To Vendor</h2>
-
-<div class="assignBox">
-
-<select id="productSelect"></select>
-
-<select id="vendorSelect"></select>
-
-<select id="boxType">
-<option value="small">Small Box</option>
-<option value="medium">Medium Box</option>
-<option value="large">Large Box</option>
-</select>
-
-<input id="vendorPrice" placeholder="Vendor Price">
-
-<button id="assignBtn">Assign</button>
-
-</div>
+<div id="productGrid" class="product-grid"></div>
 
 </div>
 
