@@ -28,22 +28,38 @@ console.error("Vendor load error:", err)
 
 }
 
-async function loadProducts(){
+async function loadProducts() {
 
 const vendor = localStorage.getItem("kultUser")
 
-if(!vendor) return
+if (!vendor) {
+console.log("No vendor logged in")
+return
+}
 
-try{
+try {
 
 const res = await fetch(`/api/get-products?vendor=${vendor}`)
+
+if (!res.ok) {
+console.error("Server returned error:", res.status)
+return
+}
+
 const data = await res.json()
+
+console.log("Products from server:", data)
 
 const grid = document.getElementById("productsGrid")
 
 grid.innerHTML = ""
 
-data.products.forEach(product=>{
+if (!data.products || data.products.length === 0) {
+grid.innerHTML = "<p>No products found</p>"
+return
+}
+
+data.products.forEach(product => {
 
 const card = document.createElement("div")
 
@@ -70,9 +86,9 @@ grid.appendChild(card)
 
 })
 
-}catch(err){
+} catch (err) {
 
-console.error("Products error:",err)
+console.error("Failed to load products:", err)
 
 }
 
